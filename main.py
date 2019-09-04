@@ -58,16 +58,13 @@ async def get_record_msg(sheet, steam_url):
         msg += '\n\n**Past Punishments:**'
         past_punishments = user_record['BAN LENGTH'].split(', ')
         for punishment in past_punishments:
-            if 'P(M)' in punishment:
-                punishment = "Permanent Ban (Moorland)"
-            elif 'P(R)' in punishment or 'P' in punishment:
-                punishment = "Permanent Ban (Ruby's)"
-            elif 'M' in punishment:
-                punishment = punishment.replace('M', ' Minutes')
-            elif 'H' in punishment:
-                punishment = punishment.replace('H', ' Hours')
-            elif 'D' in punishment:
-                punishment = punishment.replace('D', ' Days')
+
+            punishment = re.sub(r'P', 'Permanent Ban', punishment)
+            punishment = re.sub(r'\(M\)', ' (Moorland)', punishment)
+            punishment = re.sub(r'\(R\)', ' (Ruby\'s)', punishment)
+            punishment = re.sub(r'(\d+)(D)', '\g<1> Days', punishment)
+            punishment = re.sub(r'(\d+)(M)', '\g<1> Minutes', punishment)
+            punishment = re.sub(r'(\d+)(H)', '\g<1> Hours', punishment)
 
             msg += '\n- ' + punishment
         
