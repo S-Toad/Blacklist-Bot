@@ -58,7 +58,11 @@ async def get_record_msg(sheet, steam_url):
         msg += '\n\n**Past Punishments:**'
         past_punishments = user_record['BAN LENGTH'].split(', ')
         for punishment in past_punishments:
-            if 'M' in punishment:
+            if 'P(M)' in punishment:
+                punishment = "Permanent Ban (Moorland)"
+            elif 'P(R)' in punishment or 'P' in punishment:
+                punishment = "Permanent Ban (Ruby's)"
+            elif 'M' in punishment:
                 punishment = punishment.replace('M', ' Minutes')
             elif 'H' in punishment:
                 punishment = punishment.replace('H', ' Hours')
@@ -78,9 +82,14 @@ async def get_record_msg(sheet, steam_url):
     return msg
 
 def find_record(sheet, steam_url):
+    steam_id = ''.join(ch for ch in steam_url if ch.isdigit())
+    steam_id = int(steam_id)
+
     for record in sheet.get_all_records():
-        if 'PROFILE' in record and record['PROFILE'] == steam_url:
-            return record
+        if 'PROFILE' in record:
+            record_id =  ''.join(ch for ch in record['PROFILE'] if ch.isdigit())
+            if len(record_id) != 0 and int(record_id) == steam_id:
+                return record
     return None
 
 
