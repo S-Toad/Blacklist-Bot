@@ -15,7 +15,6 @@ REGEX_STR = 'https:\/\/steamcommunity.com\/\S+'
 client = discord.Client()
 scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
 creds = ServiceAccountCredentials.from_json_keyfile_name(JSON_FILE, scope)
-google_client = gspread.authorize(creds)
 
 @client.event
 async def on_message(message):
@@ -30,6 +29,7 @@ async def on_message(message):
 
     # Handle each url posted
     if matches:
+        google_client = gspread.authorize(creds)
         sheet = google_client.open_by_key(SHEET_KEY).sheet1
         for match in matches:
             print("Processing user: %s" % match)
